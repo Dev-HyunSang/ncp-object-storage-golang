@@ -1,13 +1,15 @@
 # ncp-object-storage-golang
-본 레파지스토리는 NCP(Naver Cloud Platform)에서 [`aws-sdk-go-v2`]()를 이용해서 Object Storage를 이용하는 방법에 대해서 서술하였습니다.
+본 레파지스토리는 NCP(Naver Cloud Platform)에서 [`aws-sdk-go-v2`](https://github.com/aws/aws-sdk-go-v2)를 이용해서 Object Storage를 이용하는 방법에 대해서 서술하였습니다.  
+[20230208 - 네이버 클라우드 플랫폼과 AWS SDK for Go](https://hyunsang.dev/TIL/Golang/20230208-%EB%84%A4%EC%9D%B4%EB%B2%84-%ED%81%B4%EB%9D%BC%EC%9A%B0%EB%93%9C-%ED%94%8C%EB%9E%AB%ED%8F%BC%EA%B3%BC-AWS-SDK-for-Go.html)에서의 서술한 내용을 정리하여 본 레파지스토리에 서술하였습니다.
 
 ## Getting Started
 ```shell
 $ export NCP_ACCESS_KEY = ""
 $ export NCP_SECURITY_KEY = ""
 ```
-본격적으로 `aws-sdk-go-v2`에 접근하기 위해선느 네이버 클라우드 플랫폼에서 발급 받은 인증키가 필요합니다.     
-네이버 클라우드 플랫폼 포털의 마이페이지 > 계정 관리 > 인증키 관리에서 발급 받으실 수 있습니다. 
+본격적으로 `aws-sdk-go-v2`에 접근하기 위해서는 네이버 클라우드 플랫폼에서 발급 받은 인증키가 필요합니다.     
+네이버 클라우드 플랫폼 포털의 마이페이지 > 계정 관리 > 인증키 관리에서 발급 받으실 수 있습니다.  
+혹은 자신의 용도에 맞게 변경하여서 사용하시면 되겠습니다.  
 
 ## 코드 분석
 ### 네이버 클라우드 플랫폼 연결
@@ -44,8 +46,8 @@ func Init() *s3.Client {
 }
 ```
 - 인증키가 필요합니다. 인증키는 환경 변수로 불러오고 있습니다.   
-인증키는 `Access Key`, `Secret Key`가 필요하면 위의 [Getting Started](#getting-started)를 참고해 주세요.
-- 리전별 엔드포인트도 다릅니다. 다른 리전 및 엔드포인드를 알고 싶으시면 [Object Storage](https://api.ncloud-docs.com/docs/storage-objectstorage)를 참고해 주세요.
+인증키는 `Access Key`, `Secret Key`가 필요하며 위의 [Getting Started](#getting-started)를 참고하여 발급 받아주세요.  
+- 리전별로 엔드포인트도 다릅니다. 다른 리전 및 엔드포인드를 알고 싶으시면 [Object Storage](https://api.ncloud-docs.com/docs/storage-objectstorage)를 참고해 주세요.  
 
 ### 새로운 버킷 생성하기
 > `AccessDenied: Access Denied` 오류로 인해서 아직 개발하지 못 하였습니다.  
@@ -86,6 +88,15 @@ func GetBucketInObject(bucketName string) *s3.ListObjectsOutput {
 버킷의 이름을 알고 있어야지만 버킷 내부의 오브젝트의 리스트를 가지고 올 수 있습니다.
 
 ### 버킷 내부에 오브젝트 업로드하기
+```go
+func main() {
+    uploadFile, err := os.ReadFile("./test.mp4")
+    if err != nil {
+        log.Panicln(err)
+    }
+}	
+```
+
 ```go
 func PutObjectInBucket(file []byte, bucketName, fileName, acl string) *manager.UploadOutput {
 	client := Init()
